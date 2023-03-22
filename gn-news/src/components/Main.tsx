@@ -7,6 +7,7 @@ const Main = (): JSX.Element => {
     <div className='main'>
       <SideMenu />
       <div className='wrapper'>
+        
         <NewsWrapper />
       </div>
     </div>
