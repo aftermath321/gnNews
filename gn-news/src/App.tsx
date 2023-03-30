@@ -1,28 +1,78 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useSelector } from 'react-redux';
-import './styles/styles.css';
-import {setList, setGrid} from './store/layoutSlice'
-import { RootState } from './store/store';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Main from './components/Main';
-import Popup from './components/Popup';
+import { useState } from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Home from "./pages/Home/Home";
+import { Routes, Route } from "react-router-dom";
+import SideMenu from "./components/SideMenu";
+import NewsPage from "./pages/NewsPage/NewsPage";
+import Error from "./pages/Error/Error";
+import Popup from "./components/Popup";
+import {
+  ChakraProvider,
+  extendTheme,
+  Box,
+  useDisclosure,
+} from "@chakra-ui/react";
 
-function App() {
+function App(): JSX.Element {
+  const [numberOfArticles, setNumberOfArticles] = useState<number>(0);
+  const [pop, setPop] = useState<boolean>(false);
 
-  const layout = useSelector(
-    (state: RootState) => state.layout.layoutState
-  );
-  const dispatch = useDispatch();
+  const { isOpen, onToggle, onClose } = useDisclosure();
 
+  const theme = extendTheme({
+    colors: {
+      flag: {
+        100: "#5d001e",
+        200: "#e3e2df",
+        300: "#e3afbc",
+        400: "#9a1750",
+        500: "#ee4c7c",
+      },
+    },
+  });
+
+  const popUp = (): JSX.Element => {
+    if (pop) {
+      return <Popup setter={setPop} />;
+    } else {
+      return <></>;
+    }
+  };
 
   return (
     <>
-      {/* <Popup /> */}
-      <Header />
-      <Main />
-      <Footer />
+      <ChakraProvider theme={theme}>
+        <Box
+          zIndex="1"
+          h="100%"
+          minH="100vh"
+          color="flag.200"
+          bgColor="flag.200"
+          bgImage="linear-gradient(rgba(227, 226, 223, 0.3),rgba(227, 226, 223, 0.3)) , url('https://images.unsplash.com/photo-1543788303-c15e49305bc6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1632&q=80')"
+          bgSize="cover"
+          bgAttachment="fixed"
+          bgRepeat="no-repeat"
+        >
+          {popUp()}
+          <Header setter={setPop} sideButtonFunc={onToggle} />
+          <SideMenu closeFunction={onClose} isOpen={isOpen} />
+
+          <Routes>
+            <Route
+              path="/"
+              element={<Home numberOfArt={setNumberOfArticles} />}
+            />
+            <Route
+              path="/country/:code"
+              element={<NewsPage numberOfArt={setNumberOfArticles} />}
+            />
+            <Route path="/*" element={<Error />} />
+          </Routes>
+
+          <Footer giveNumber={numberOfArticles} />
+        </Box>
+      </ChakraProvider>
     </>
   );
 }
