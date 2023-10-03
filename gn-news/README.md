@@ -11,4 +11,4 @@ lub w przypadku yarn:
 yarn run start
 
 
-<p>Następnie aplikacja za pomocą przeglądarki udać się na url: localhost:3000</p>
+<p>Następnie otworzyć za pomocą przeglądarki i udać się na url: localhost:3000</p>
